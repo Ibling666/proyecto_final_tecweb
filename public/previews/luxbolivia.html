@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LUX - El Portal de Bolivia</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Merriweather:wght@700;900&family=Roboto:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ======== 1. CONFIGURACIÓN GLOBAL Y VARIABLES ======== */
+      :root {
+        /* Paleta de colores: Moderna con acentos bolivianos */
+        --color-primario: #007934; /* Verde (Bolivia) */
+        --color-secundario: #d52b1e; /* Rojo (Bolivia) */
+        --color-acento: #fdb813; /* Amarillo/Oro (Bolivia y "LUX") */
+
+        --color-fondo: #f4f4f4;
+        --color-blanco: #ffffff;
+        --color-texto-principal: #222222;
+        --color-texto-secundario: #555555;
+        --color-header-fondo: #1a1a1a;
+
+        --fuente-titulos: "Merriweather", serif;
+        --fuente-cuerpo: "Roboto", sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--fuente-cuerpo);
+        line-height: 1.6;
+        color: var(--color-texto-principal);
+        background-color: var(--color-fondo);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      h1,
+      h2,
+      h3,
+      h4,
+      h5,
+      h6 {
+        font-family: var(--fuente-titulos);
+        margin-bottom: 12px;
+        color: var(--color-texto-principal);
+      }
+
+      a {
+        text-decoration: none;
+        color: var(--color-primario);
+        transition: color 0.3s ease;
+      }
+      a:hover {
+        color: var(--color-secundario);
+      }
+
+      img {
+        max-width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      /* Utilidad: Etiqueta de Categoría */
+      .category-tag {
+        display: inline-block;
+        background-color: var(--color-primario);
+        color: var(--color-blanco);
+        font-family: var(--fuente-cuerpo);
+        font-size: 0.75rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 4px;
+        text-transform: uppercase;
+        margin-bottom: 10px;
+      }
+      /* Variaciones de etiquetas */
+      .tag-economia {
+        background-color: var(--color-acento);
+        color: #000;
+      }
+      .tag-nacional {
+        background-color: var(--color-secundario);
+      }
+      .tag-deportes {
+        background-color: var(--color-primario);
+      }
+      .tag-mundo {
+        background-color: #337ab7;
+      }
+
+      /* ======== 2. ENCABEZADO Y NAVEGACIÓN ======== */
+      .top-bar {
+        background-color: #333;
+        color: var(--color-blanco);
+        font-size: 0.8rem;
+        padding: 8px 0;
+      }
+      .top-bar .container {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      /* Encabezado principal (Logo y Nav) */
+      header {
+        background-color: var(--color-header-fondo);
+        padding: 20px 0;
+        border-bottom: 4px solid var(--color-acento);
+      }
+
+      .header-main {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap; /* Para responsive */
+      }
+
+      .logo {
+        font-family: var(--fuente-titulos);
+        font-size: 3rem;
+        font-weight: 900;
+        color: var(--color-blanco);
+        line-height: 1;
+      }
+      .logo span {
+        color: var(--color-acento); /* La X en amarillo */
+      }
+
+      .search-bar {
+        display: flex;
+      }
+      .search-bar input {
+        padding: 10px;
+        border: none;
+        border-radius: 5px 0 0 5px;
+        font-size: 1rem;
+      }
+      .search-bar button {
+        padding: 10px 15px;
+        border: none;
+        background-color: var(--color-acento);
+        color: var(--color-texto-principal);
+        border-radius: 0 5px 5px 0;
+        cursor: pointer;
+        font-weight: 700;
+      }
+
+      /* Menú de Navegación */
+      .main-nav {
+        background-color: var(--color-blanco);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      .main-nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap; /* Para responsive */
+      }
+
+      .main-nav ul li a {
+        display: block;
+        padding: 15px 20px;
+        color: var(--color-texto-principal);
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        border-bottom: 3px solid transparent;
+      }
+
+      .main-nav ul li a:hover,
+      .main-nav ul li a.active {
+        color: var(--color-primario);
+        border-bottom: 3px solid var(--color-primario);
+      }
+
+      /* ======== 3. SECCIÓN HERO (NOTICIAS PRINCIPALES) ======== */
+      .hero-grid {
+        padding: 30px 0;
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* 2/3 para la principal, 1/3 para la secundaria */
+        grid-template-rows: 250px 250px; /* Dos filas de 250px */
+        gap: 20px;
+      }
+
+      /* Noticia principal (ocupa 2x2) */
+      .featured-story {
+        grid-column: 1 / 2;
+        grid-row: 1 / 3; /* Ocupa las 2 filas */
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      /* Las 2 noticias secundarias a la derecha */
+      .secondary-story {
+        position: relative;
+        border-radius: 8px;
+        overflow: hidden;
+      }
+
+      /* Estilos comunes para las tarjetas del Hero */
+      .story-card {
+        width: 100%;
+        height: 100%;
+      }
+      .story-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      /* Contenido sobre la imagen */
+      .story-content {
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        padding: 20px;
+        color: var(--color-blanco);
+        z-index: 2;
+        /* Degradado oscuro para legibilidad */
+        background: linear-gradient(
+          to top,
+          rgba(0, 0, 0, 0.9) 0%,
+          rgba(0, 0, 0, 0) 100%
+        );
+      }
+
+      .story-content h2 {
+        font-size: 1.8rem;
+        color: var(--color-blanco);
+        line-height: 1.2;
+      }
+      .story-content h3 {
+        font-size: 1.2rem;
+        color: var(--color-blanco);
+        line-height: 1.3;
+      }
+      .story-content .category-tag {
+        margin-bottom: 5px;
+      }
+
+      /* Ajustes de tamaño */
+      .featured-story .category-tag {
+        font-size: 0.8rem;
+      }
+      .secondary-story h3 {
+        font-size: 1rem;
+      }
+      .secondary-story .category-tag {
+        font-size: 0.6rem;
+        padding: 3px 6px;
+      }
+
+      /* ======== 4. ÁREA DE CONTENIDO PRINCIPAL Y SIDEBAR ======== */
+      .main-content-area {
+        padding: 30px 0;
+        display: grid;
+        grid-template-columns: 3fr 1fr; /* 3/4 para el feed, 1/4 para el sidebar */
+        gap: 30px;
+      }
+
+      /* --- Main Feed (Izquierda) --- */
+      .main-feed {
+        display: flex;
+        flex-direction: column;
+        gap: 40px;
+      }
+
+      .category-section h2.section-title {
+        font-size: 2rem;
+        border-bottom: 3px solid var(--color-texto-principal);
+        padding-bottom: 10px;
+        margin-bottom: 30px;
+      }
+
+      /* Tarjeta de artículo estándar */
+      .article-card {
+        display: grid;
+        grid-template-columns: 300px 1fr; /* Imagen a la izq, texto a la der. */
+        gap: 20px;
+        background-color: var(--color-blanco);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        border-radius: 8px;
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+      .article-card img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+      .article-content {
+        padding: 20px;
+      }
+      .article-content h3 {
+        font-size: 1.3rem;
+        line-height: 1.4;
+        margin-bottom: 10px;
+      }
+      .article-content h3 a {
+        color: var(--color-texto-principal);
+      }
+      .article-content h3 a:hover {
+        color: var(--color-primario);
+      }
+      .article-content p {
+        font-size: 0.9rem;
+        color: var(--color-texto-secundario);
+        margin-bottom: 15px;
+      }
+      .article-meta {
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #999;
+      }
+
+      /* --- Sidebar (Derecha) --- */
+      .sidebar {
+        position: sticky; /* Se queda fija al hacer scroll */
+        top: 80px; /* 60px (nav) + 20px (espacio) */
+      }
+
+      .widget {
+        background-color: var(--color-blanco);
+        padding: 20px;
+        margin-bottom: 30px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+      .widget h4.widget-title {
+        font-size: 1.3rem;
+        border-bottom: 2px solid var(--color-acento);
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+      }
+
+      /* Widget "Lo más visto" */
+      .popular-posts ul {
+        list-style: none;
+      }
+      .popular-posts li {
+        margin-bottom: 15px;
+        border-bottom: 1px solid #eee;
+        padding-bottom: 15px;
+        display: flex;
+        align-items: center;
+        gap: 15px;
+      }
+      .popular-posts li:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+        padding-bottom: 0;
+      }
+      .popular-post-number {
+        font-family: var(--fuente-titulos);
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--color-acento);
+      }
+      .popular-post-content h5 a {
+        font-family: var(--fuente-cuerpo);
+        font-size: 0.9rem;
+        font-weight: 700;
+        line-height: 1.3;
+        color: var(--color-texto-principal);
+      }
+      .popular-post-content h5 a:hover {
+        color: var(--color-primario);
+      }
+
+      /* Widget "Opinión" */
+      .opinion-posts .opinion-author {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 15px;
+      }
+      .opinion-author img {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        object-fit: cover;
+      }
+      .opinion-author-info h5 {
+        font-size: 1rem;
+        margin-bottom: 0;
+      }
+      .opinion-author-info span {
+        font-size: 0.8rem;
+        color: var(--color-texto-secundario);
+        font-style: italic;
+      }
+      .opinion-posts p a {
+        font-family: var(--fuente-titulos);
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-texto-principal);
+        line-height: 1.4;
+      }
+
+      /* ======== 5. PIE DE PÁGINA (FOOTER) ======== */
+      footer {
+        background-color: var(--color-header-fondo);
+        color: var(--color-blanco);
+        padding: 40px 0 20px 0;
+        margin-top: 40px;
+      }
+
+      .footer-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr 1fr;
+        gap: 30px;
+        margin-bottom: 30px;
+      }
+
+      .footer-about .logo {
+        font-size: 2.5rem;
+        margin-bottom: 15px;
+      }
+      .footer-about p {
+        font-size: 0.9rem;
+        color: #ccc;
+        line-height: 1.7;
+      }
+
+      .footer-widget h5 {
+        color: var(--color-acento);
+        font-size: 1.1rem;
+        margin-bottom: 20px;
+        text-transform: uppercase;
+      }
+      .footer-widget ul {
+        list-style: none;
+      }
+      .footer-widget ul li {
+        margin-bottom: 10px;
+      }
+      .footer-widget ul li a {
+        color: #ccc;
+        font-size: 0.9rem;
+      }
+      .footer-widget ul li a:hover {
+        color: var(--color-blanco);
+        padding-left: 5px;
+      }
+
+      .footer-bottom {
+        border-top: 1px solid #444;
+        padding-top: 20px;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #aaa;
+      }
+
+      /* ======== 6. RESPONSIVE (Móviles) ======== */
+      @media (max-width: 992px) {
+        .main-content-area {
+          grid-template-columns: 2fr 1fr; /* Feed más pequeño, sidebar se mantiene */
+        }
+        .article-card {
+          grid-template-columns: 1fr; /* Imagen arriba, texto abajo */
+        }
+        .article-card img {
+          height: 200px; /* Altura fija para la imagen */
+        }
+      }
+
+      @media (max-width: 768px) {
+        .hero-grid {
+          grid-template-columns: 1fr; /* 1 columna */
+          grid-template-rows: 350px 200px 200px; /* Fila para cada tarjeta */
+        }
+        .featured-story {
+          grid-column: 1 / 2;
+          grid-row: 1 / 2; /* Ocupa solo la primera fila */
+        }
+        .story-content h2 {
+          font-size: 1.5rem;
+        }
+
+        .main-content-area {
+          grid-template-columns: 1fr; /* 1 columna */
+        }
+        .sidebar {
+          position: static; /* Quita el sticky */
+          order: -1; /* Mueve el sidebar arriba del feed */
+          margin-bottom: 30px;
+        }
+
+        .footer-grid {
+          grid-template-columns: 1fr;
+          text-align: center;
+        }
+
+        .header-main {
+          flex-direction: column;
+          gap: 15px;
+        }
+        .main-nav ul {
+          justify-content: space-around;
+        }
+        .main-nav ul li a {
+          padding: 10px 8px;
+          font-size: 0.8rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="top-bar">
+      <div class="container">
+        <div class="current-date">Miércoles, 12 de Noviembre de 2025</div>
+        <div class="social-links-top">
+          <a href="#">Facebook</a> | <a href="#">Twitter</a> |
+          <a href="#">Instagram</a>
+        </div>
+      </div>
+    </div>
+
+    <header>
+      <div class="container header-main">
+        <div class="logo">LU<span>X</span></div>
+        <div class="search-bar">
+          <input type="search" placeholder="Buscar en LUX..." />
+          <button type="submit">Buscar</button>
+        </div>
+      </div>
+    </header>
+
+    <nav class="main-nav">
+      <div class="container">
+        <ul>
+          <li><a href="#" class="active">Inicio</a></li>
+          <li><a href="#">Nacional</a></li>
+          <li><a href="#">Departamentos</a></li>
+          <li><a href="#">Economía</a></li>
+          <li><a href="#">Mundo</a></li>
+          <li><a href="#">Deportes</a></li>
+          <li><a href="#">Cultura</a></li>
+          <li><a href="#">Opinión</a></li>
+        </ul>
+      </div>
+    </nav>
+
+    <div class="container">
+      <section class="hero-grid">
+        <article class="story-card featured-story">
+          <img
+            src="https://placehold.co/800x600/D52B1E/FFFFFF?text=Noticia+Principal"
+            alt="Noticia principal de Bolivia"
+          />
+          <div class="story-content">
+            <span class="category-tag tag-nacional">Nacional</span>
+            <h2>
+              Gobierno anuncia nuevo plan de industrialización del litio en
+              Potosí
+            </h2>
+          </div>
+        </article>
+
+        <article class="story-card secondary-story">
+          <img
+            src="https://placehold.co/400x300/FDB813/000000?text=Economía"
+            alt="Economía"
+          />
+          <div class="story-content">
+            <span class="category-tag tag-economia">Economía</span>
+            <h3>
+              BCB mantiene la tasa de interés para impulsar el crédito
+              productivo
+            </h3>
+          </div>
+        </article>
+
+        <article class="story-card secondary-story">
+          <img
+            src="https://placehold.co/400x300/007934/FFFFFF?text=Deportes"
+            alt="Deportes"
+          />
+          <div class="story-content">
+            <span class="category-tag tag-deportes">Deportes</span>
+            <h3>
+              Bolívar y The Strongest se preparan para el clásico de infarto
+            </h3>
+          </div>
+        </article>
+      </section>
+    </div>
+
+    <div class="container main-content-area">
+      <main class="main-feed">
+        <section class="category-section">
+          <h2 class="section-title">Nacional</h2>
+
+          <article class="article-card">
+            <img
+              src="https://placehold.co/300x200/555555/FFFFFF?text=Congreso"
+              alt="Congreso de Bolivia"
+            />
+            <div class="article-content">
+              <span class="category-tag tag-nacional">Política</span>
+              <h3>
+                <a href="#"
+                  >Congreso debate la nueva ley de hidrocarburos entre
+                  tensiones</a
+                >
+              </h3>
+              <p>
+                La sesión fue suspendida tras horas de debate sin consenso entre
+                las bancadas...
+              </p>
+              <div class="article-meta">
+                Por Redacción LUX - Hace 15 minutos
+              </div>
+            </div>
+          </article>
+
+          <article class="article-card">
+            <img
+              src="https://placehold.co/300x200/663399/FFFFFF?text=Santa+Cruz"
+              alt="Santa Cruz"
+            />
+            <div class="article-content">
+              <span class="category-tag tag-nacional">Sociedad</span>
+              <h3>
+                <a href="#"
+                  >Santa Cruz: Nuevas medidas de bioseguridad ante el alza de
+                  casos</a
+                >
+              </h3>
+              <p>
+                El SEDES departamental confirmó un incremento del 20% en los
+                casos...
+              </p>
+              <div class="article-meta">Por Ana Mendoza - Hace 1 hora</div>
+            </div>
+          </article>
+        </section>
+
+        <section class="category-section">
+          <h2 class="section-title">Deportes</h2>
+
+          <article class="article-card">
+            <img
+              src="https://placehold.co/300x200/007934/FFFFFF?text=Fútbol"
+              alt="Fútbol boliviano"
+            />
+            <div class="article-content">
+              <span class="category-tag tag-deportes">Fútbol</span>
+              <h3>
+                <a href="#"
+                  >La "Verde" presenta su nueva convocatoria para las
+                  eliminatorias</a
+                >
+              </h3>
+              <p>
+                El DT incluyó a tres sorpresas de la liga local y buscará sumar
+                puntos en La Paz...
+              </p>
+              <div class="article-meta">Por Juan Pérez - Hace 45 minutos</div>
+            </div>
+          </article>
+
+          <article class="article-card">
+            <img
+              src="https://placehold.co/300x200/007934/FFFFFF?text=Dakar"
+              alt="Rally Dakar"
+            />
+            <div class="article-content">
+              <span class="category-tag tag-deportes">Motor</span>
+              <h3>
+                <a href="#"
+                  >"Chavo" Salvatierra confirma su participación en el próximo
+                  Dakar</a
+                >
+              </h3>
+              <p>
+                El piloto boliviano buscará hacer historia en la categoría de
+                motos...
+              </p>
+              <div class="article-meta">Por Redacción LUX - Hace 3 horas</div>
+            </div>
+          </article>
+        </section>
+      </main>
+
+      <aside class="sidebar">
+        <div class="widget popular-posts">
+          <h4 class="widget-title">Lo Más Visto</h4>
+          <ul>
+            <li>
+              <div class="popular-post-number">1</div>
+              <div class="popular-post-content">
+                <h5>
+                  <a href="#"
+                    >Plan de industrialización del litio: Todos los detalles</a
+                  >
+                </h5>
+              </div>
+            </li>
+            <li>
+              <div class="popular-post-number">2</div>
+              <div class="popular-post-content">
+                <h5>
+                  <a href="#"
+                    >Clásico paceño: ¿Dónde y a qué hora ver el partido?</a
+                  >
+                </h5>
+              </div>
+            </li>
+            <li>
+              <div class="popular-post-number">3</div>
+              <div class="popular-post-content">
+                <h5>
+                  <a href="#"
+                    >Debate de hidrocarburos se suspende en el Congreso</a
+                  >
+                </h5>
+              </div>
+            </li>
+          </ul>
+        </div>
+
+        <div class="widget opinion-posts">
+          <h4 class="widget-title">Opinión</h4>
+
+          <div class="opinion-post">
+            <div class="opinion-author">
+              <img
+                src="https://placehold.co/100x100/EFEFEF/333333?text=Autor+1"
+                alt="Autor de opinión"
+              />
+              <div class="opinion-author-info">
+                <h5>Carlos Valverde</h5>
+                <span>Analista Político</span>
+              </div>
+            </div>
+            <p>
+              <a href="#">La encrucijada del gas y el futuro de la economía</a>
+            </p>
+          </div>
+          <hr style="border: 0; border-top: 1px solid #eee; margin: 15px 0" />
+          <div class="opinion-post">
+            <div class="opinion-author">
+              <img
+                src="https://placehold.co/100x100/EFEFEF/333333?text=Autor+2"
+                alt="Autora de opinión"
+              />
+              <div class="opinion-author-info">
+                <h5>María Vaca</h5>
+                <span>Socióloga</span>
+              </div>
+            </div>
+            <p>
+              <a href="#"
+                >El desafío de la cohesión social en la Bolivia moderna</a
+              >
+            </p>
+          </div>
+        </div>
+      </aside>
+    </div>
+
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-about">
+            <div class="logo">LU<span>X</span></div>
+            <p>
+              El portal de noticias líder en Bolivia. Brindando información
+              clara, veraz y oportuna las 24 horas del día. La luz de la verdad.
+            </p>
+          </div>
+
+          <div class="footer-widget">
+            <h5>Secciones</h5>
+            <ul>
+              <li><a href="#">Nacional</a></li>
+              <li><a href="#">Economía</a></li>
+              <li><a href="#">Deportes</a></li>
+              <li><a href="#">Mundo</a></li>
+              <li><a href="#">Cultura</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-widget">
+            <h5>Legal</h5>
+            <ul>
+              <li><a href="#">Sobre Nosotros</a></li>
+              <li><a href="#">Política de Privacidad</a></li>
+              <li><a href="#">Términos y Condiciones</a></li>
+              <li><a href="#">Contacto</a></li>
+              <li><a href="#">Publicidad</a></li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footer-bottom">
+          &copy; 2025 Portal LUX Bolivia. Todos los derechos reservados.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>

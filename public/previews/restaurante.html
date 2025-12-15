@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>El Sabor Gourmet - Reserva tu Mesa</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500&family=Playfair+Display:wght@700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ======== 1. CONFIGURACIÓN GLOBAL Y VARIABLES ======== */
+      :root {
+        --color-primario: #b98d5c; /* Un tono dorado/bronce elegante */
+        --color-secundario: #252525; /* Fondo oscuro/carbón */
+        --color-blanco: #ffffff;
+        --color-texto-claro: #f5f5f5;
+        --color-texto-oscuro: #333333;
+
+        --fuente-titulos: "Playfair Display", serif;
+        --fuente-cuerpo: "Montserrat", sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--fuente-cuerpo);
+        line-height: 1.7;
+        color: var(--color-texto-oscuro);
+        background-color: var(--color-blanco);
+      }
+
+      .container {
+        max-width: 1100px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-family: var(--fuente-titulos);
+        font-weight: 700;
+        color: var(--color-secundario);
+        margin-bottom: 15px;
+      }
+
+      h1 {
+        font-size: 3.5rem;
+      }
+      h2 {
+        font-size: 2.5rem;
+        text-align: center;
+      }
+      h3 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        margin-bottom: 20px;
+      }
+
+      a {
+        text-decoration: none;
+        color: var(--color-primario);
+      }
+
+      /* Botón de Llamada a la Acción (CTA) */
+      .cta-button {
+        display: inline-block;
+        background-color: var(--color-primario);
+        color: var(--color-blanco);
+        padding: 12px 30px;
+        border-radius: 5px;
+        font-weight: 500;
+        font-family: var(--fuente-cuerpo);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.3s ease;
+      }
+
+      .cta-button:hover {
+        background-color: #a17b4f; /* Un tono más oscuro de dorado */
+      }
+
+      /* ======== 2. ENCABEZADO Y NAVEGACIÓN ======== */
+      header {
+        background-color: var(--color-blanco);
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        padding: 20px 0;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+
+      header nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .logo {
+        font-family: var(--fuente-titulos);
+        font-size: 1.8rem;
+        font-weight: 700;
+        color: var(--color-secundario);
+      }
+
+      .nav-links {
+        list-style: none;
+        display: flex;
+      }
+
+      .nav-links li {
+        margin-left: 30px;
+      }
+
+      .nav-links li a {
+        color: var(--color-texto-oscuro);
+        font-weight: 500;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        padding-bottom: 5px;
+        border-bottom: 2px solid transparent;
+        transition: all 0.3s ease;
+      }
+
+      .nav-links li a:hover,
+      .nav-links li a.active {
+        color: var(--color-primario);
+        border-bottom: 2px solid var(--color-primario);
+      }
+
+      /* Botón de reserva en la navegación */
+      .nav-button {
+        background-color: var(--color-primario);
+        color: var(--color-blanco);
+        padding: 10px 20px;
+        border-radius: 5px;
+        border-bottom: none;
+      }
+      .nav-button:hover {
+        background-color: #a17b4f;
+        color: var(--color-blanco);
+        border-bottom: none;
+      }
+
+      /* ======== 3. SECCIÓN HERO (CON FORMULARIO DE RESERVA) ======== */
+      .hero {
+        height: 90vh; /* Casi toda la pantalla */
+        background: url("https://placehold.co/1920x1080/555555/FFFFFF?text=Imagen+Elegante+de+Restaurante")
+          no-repeat center center/cover;
+        /* IMPORTANTE: Reemplaza la URL por una foto de tu restaurante */
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+      }
+
+      .hero::after {
+        /* Superposición oscura para legibilidad */
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.6);
+        z-index: -1;
+      }
+
+      .hero-content {
+        z-index: 2;
+        color: var(--color-blanco);
+        text-align: center;
+        max-width: 800px; /* Ancho máximo para el contenido */
+        padding: 20px;
+      }
+
+      .hero h1 {
+        color: var(--color-blanco);
+        font-size: 4rem;
+      }
+
+      .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+      }
+
+      /* Formulario de Reserva en el Hero */
+      .reservation-form {
+        background-color: rgba(255, 255, 255, 0.1); /* Fondo semitransparente */
+        backdrop-filter: blur(10px); /* Efecto "frosty" */
+        padding: 30px;
+        border-radius: 10px;
+        display: grid;
+        grid-template-columns: repeat(2, 1fr); /* 2 columnas */
+        gap: 20px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        text-align: left;
+      }
+
+      .form-group label {
+        font-size: 0.9rem;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+
+      .form-group input,
+      .form-group select {
+        padding: 12px;
+        border: none;
+        border-radius: 5px;
+        font-family: var(--fuente-cuerpo);
+        font-size: 1rem;
+      }
+
+      /* El campo de "Nombre" y "Teléfono" ocupan 2 columnas */
+      .form-group.full-width {
+        grid-column: 1 / -1; /* Ocupa todo el ancho */
+      }
+
+      .reservation-form .cta-button {
+        grid-column: 1 / -1; /* El botón ocupa todo el ancho */
+        font-size: 1.1rem;
+        padding: 15px;
+      }
+
+      /* ======== 4. SECCIÓN "SOBRE NOSOTROS" (Bienvenida) ======== */
+      .about {
+        padding: 80px 0;
+        background-color: #fdfaf6; /* Un fondo crema muy claro */
+      }
+
+      .about-grid {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 50px;
+        align-items: center;
+      }
+
+      .about-image img {
+        width: 100%;
+        border-radius: 10px;
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .about-content h2 {
+        text-align: left;
+      }
+
+      /* ======== 5. SECCIÓN PLATOS DESTACADOS ======== */
+      .menu-highlights {
+        padding: 80px 0;
+      }
+
+      .menu-highlights h2 {
+        margin-bottom: 50px;
+      }
+
+      .highlight-grid {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 30px;
+      }
+
+      .dish-card {
+        background-color: var(--color-blanco);
+        border-radius: 10px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+        text-align: left;
+        overflow: hidden;
+      }
+
+      .dish-card img {
+        width: 100%;
+        height: 220px;
+        object-fit: cover;
+      }
+
+      .dish-card-content {
+        padding: 25px;
+      }
+
+      .dish-card-content h3 {
+        color: var(--color-primario);
+      }
+
+      .dish-card-content p {
+        font-size: 0.9rem;
+        margin-bottom: 0;
+      }
+
+      /* ======== 6. PIE DE PÁGINA ======== */
+      footer {
+        background-color: var(--color-secundario);
+        color: var(--color-texto-claro);
+        text-align: center;
+        padding: 50px 0;
+      }
+
+      .footer-content {
+        max-width: 600px;
+        margin: 0 auto;
+      }
+
+      .footer-content h3 {
+        color: var(--color-blanco);
+        font-size: 1.2rem;
+        margin-bottom: 10px;
+      }
+
+      .footer-content p {
+        font-size: 0.9rem;
+        opacity: 0.8;
+        margin-bottom: 10px;
+      }
+
+      .social-links {
+        margin-top: 20px;
+      }
+
+      .social-links a {
+        color: var(--color-blanco);
+        margin: 0 12px;
+        font-size: 1.5rem;
+        opacity: 0.8;
+        transition: opacity 0.3s ease;
+      }
+
+      .social-links a:hover {
+        opacity: 1;
+      }
+
+      /* ======== 7. RESPONSIVE (Para Móviles) ======== */
+      @media (max-width: 768px) {
+        /* Ocultamos el menú de navegación (se necesitaría JS para un menú hamburguesa) */
+        .nav-links {
+          display: none;
+        }
+        .logo {
+          text-align: center;
+          width: 100%;
+        }
+
+        .hero h1 {
+          font-size: 2.8rem;
+        }
+        .hero p {
+          font-size: 1rem;
+        }
+
+        /* Hacemos el formulario de 1 columna */
+        .reservation-form {
+          grid-template-columns: 1fr;
+        }
+        /* Hacemos que todos los campos sean de 1 columna */
+        .form-group.full-width {
+          grid-column: 1 / 2;
+        }
+        .reservation-form .cta-button {
+          grid-column: 1 / 2;
+        }
+
+        .about-grid {
+          grid-template-columns: 1fr; /* Una columna */
+        }
+        .about-image {
+          /* Se muestra la imagen primero en móvil */
+          order: -1;
+        }
+        .about-content h2 {
+          text-align: center;
+        }
+
+        .highlight-grid {
+          grid-template-columns: 1fr; /* Una columna */
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="container">
+        <div class="logo">El Sabor Gourmet</div>
+
+        <ul class="nav-links">
+          <li><a href="#" class="active">Inicio</a></li>
+          <li><a href="#">Menú</a></li>
+          <li><a href="#">Galería</a></li>
+          <li><a href="#">Contacto</a></li>
+          <li><a href="#" class="nav-button">Reservar</a></li>
+        </ul>
+      </nav>
+    </header>
+
+    <section class="hero">
+      <div class="hero-content">
+        <h1>Reserva tu Mesa</h1>
+        <p>
+          Vive una experiencia culinaria inolvidable. Reserva fácil y rápido.
+        </p>
+
+        <form class="reservation-form">
+          <div class="form-group full-width">
+            <label for="name">Nombre</label>
+            <input
+              type="text"
+              id="name"
+              name="name"
+              placeholder="Tu nombre completo"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="date">Fecha</label>
+            <input type="date" id="date" name="date" required />
+          </div>
+
+          <div class="form-group">
+            <label for="time">Hora</label>
+            <input
+              type="time"
+              id="time"
+              name="time"
+              value="19:00"
+              step="1800"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="guests">Personas</label>
+            <select id="guests" name="guests">
+              <option value="1">1 Persona</option>
+              <option value="2" selected>2 Personas</option>
+              <option value="3">3 Personas</option>
+              <option value="4">4 Personas</option>
+              <option value="5">5+ Personas</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="phone">Teléfono</label>
+            <input
+              type="tel"
+              id="phone"
+              name="phone"
+              placeholder="Tu teléfono"
+              required
+            />
+          </div>
+
+          <button type="submit" class="cta-button">Confirmar Reserva</button>
+        </form>
+      </div>
+    </section>
+
+    <section class="about">
+      <div class="container about-grid">
+        <div class="about-content">
+          <h2>Bienvenidos a El Sabor</h2>
+          <p>
+            En El Sabor Gourmet, cada plato cuenta una historia. Nuestra
+            filosofía se basa en ingredientes frescos, locales y de temporada,
+            preparados con técnicas innovadoras que respetan la tradición.
+          </p>
+          <p>
+            Desde nuestra apertura en 2010, nuestro objetivo ha sido crear un
+            espacio donde la alta cocina y un ambiente acogedor se encuentren.
+          </p>
+          <a href="#" class="cta-button">Conoce Nuestra Historia</a>
+        </div>
+        <div class="about-image">
+          <img
+            src="https://placehold.co/600x500/EFEFEF/333333?text=Interior+del+Restaurante"
+            alt="Interior elegante del restaurante"
+          />
+        </div>
+      </div>
+    </section>
+
+    <section class="menu-highlights">
+      <div class="container">
+        <h2>Nuestros Platos Estrella</h2>
+        <div class="highlight-grid">
+          <div class="dish-card">
+            <img
+              src="https://placehold.co/400x300/A88562/FFFFFF?text=Plato+1"
+              alt="Plato de Solomillo"
+            />
+            <div class="dish-card-content">
+              <h3>Solomillo en su Jugo</h3>
+              <p>
+                Solomillo de primera, cocinado a la perfección con una reducción
+                de vino tinto y hierbas.
+              </p>
+            </div>
+          </div>
+
+          <div class="dish-card">
+            <img
+              src="https://placehold.co/400x300/D4A373/FFFFFF?text=Plato+2"
+              alt="Plato de Risotto"
+            />
+            <div class="dish-card-content">
+              <h3>Risotto de Trufa y Setas</h3>
+              <p>
+                Arroz Arborio cremoso con una selección de setas de temporada y
+                aceite de trufa blanca.
+              </p>
+            </div>
+          </div>
+
+          <div class="dish-card">
+            <img
+              src="https://placehold.co/400x300/E0B48B/FFFFFF?text=Postre"
+              alt="Postre de chocolate"
+            />
+            <div class="dish-card-content">
+              <h3>Volcán de Chocolate</h3>
+              <p>
+                Nuestro famoso postre con un corazón líquido de chocolate belga
+                y helado de vainilla.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container footer-content">
+        <h3>El Sabor Gourmet</h3>
+        <p>Dirección: Calle Ficticia 123, Ciudad Principal</p>
+        <p>Teléfono: +123 456 7890</p>
+        <p>Horario: Mar-Dom, 18:00 - 23:00</p>
+
+        <div class="social-links">
+          <a href="#">Instagram</a> | <a href="#">Facebook</a> |
+          <a href="#">TripAdvisor</a>
+        </div>
+      </div>
+      <p style="margin-top: 30px; font-size: 0.8rem; opacity: 0.5">
+        &copy; 2024 El Sabor Gourmet. Todos los derechos reservados.
+      </p>
+    </footer>
+  </body>
+</html>

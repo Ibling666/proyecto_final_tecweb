@@ -1,0 +1,726 @@
+<!DOCTYPE html>
+<html lang="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MercadoFácil - Tu Supermercado Online</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;600;700;800&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      /* ======== 1. CONFIGURACIÓN GLOBAL Y VARIABLES ======== */
+      :root {
+        --color-primario: #007bff; /* Azul principal */
+        --color-secundario: #0056b3; /* Azul oscuro (hover) */
+        --color-acento: #ffc107; /* Amarillo para ofertas */
+        --color-fondo: #f8f9fa;
+        --color-blanco: #ffffff;
+        --color-texto: #333333;
+        --color-texto-gris: #666666;
+
+        --fuente-principal: "Nunito Sans", sans-serif;
+      }
+
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: var(--fuente-principal);
+        line-height: 1.6;
+        color: var(--color-texto);
+        background-color: var(--color-fondo);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-weight: 800;
+        margin-bottom: 15px;
+      }
+
+      h2 {
+        font-size: 2.2rem;
+        text-align: center;
+      }
+      h3 {
+        font-size: 1.4rem;
+      }
+
+      a {
+        text-decoration: none;
+        color: var(--color-primario);
+      }
+
+      img {
+        max-width: 100%;
+        display: block;
+      }
+
+      /* Botón de Llamada a la Acción (CTA) */
+      .cta-button {
+        display: inline-block;
+        background-color: var(--color-acento);
+        color: var(--color-texto);
+        padding: 12px 25px;
+        border-radius: 25px; /* Bordes redondeados */
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 0.9rem;
+        border: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+      .cta-button:hover {
+        background-color: #ffb300;
+        transform: translateY(-2px);
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+
+      /* ======== 2. ENCABEZADO (CON BÚSQUEDA Y CARRITO) ======== */
+
+      /* Barra superior de contacto */
+      .top-bar {
+        background-color: #333;
+        color: var(--color-blanco);
+        font-size: 0.8rem;
+        padding: 8px 0;
+      }
+      .top-bar .container {
+        display: flex;
+        justify-content: space-between;
+      }
+      .top-bar a {
+        color: var(--color-blanco);
+        margin-left: 15px;
+      }
+
+      /* Encabezado principal */
+      .header-main {
+        background-color: var(--color-blanco);
+        padding: 20px 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .logo {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--color-primario);
+      }
+
+      /* La barra de búsqueda es central y grande */
+      .search-bar {
+        flex: 1; /* Ocupa el espacio disponible */
+        display: flex;
+        margin: 0 30px;
+        max-width: 600px;
+      }
+      .search-bar input {
+        flex: 1;
+        padding: 12px 20px;
+        border: 2px solid #ddd;
+        border-radius: 25px 0 0 25px;
+        font-size: 1rem;
+        border-right: none;
+      }
+      .search-bar button {
+        padding: 12px 25px;
+        border: none;
+        background-color: var(--color-primario);
+        color: var(--color-blanco);
+        border-radius: 0 25px 25px 0;
+        cursor: pointer;
+        font-weight: 700;
+        font-size: 1rem;
+      }
+      .search-bar button:hover {
+        background-color: var(--color-secundario);
+      }
+
+      /* Acciones del usuario: Cuenta y Carrito */
+      .user-actions {
+        display: flex;
+        align-items: center;
+        gap: 20px; /* Espacio entre iconos */
+      }
+      .user-actions a {
+        display: flex;
+        align-items: center;
+        color: var(--color-texto-gris);
+        font-weight: 600;
+        font-size: 0.9rem;
+      }
+      .user-actions a:hover {
+        color: var(--color-primario);
+      }
+      /* (Estos 🛒 y 👤 son emojis. En un sitio real, usarías íconos SVG o FontAwesome) */
+      .user-actions .icon {
+        font-size: 1.5rem;
+        margin-right: 8px;
+      }
+
+      /* ======== 3. NAVEGACIÓN DE CATEGORÍAS ======== */
+      .category-nav {
+        background-color: var(--color-blanco);
+        border-top: 1px solid #eee;
+        border-bottom: 1px solid #eee;
+        position: sticky;
+        top: 0;
+        z-index: 100;
+      }
+      .category-nav ul {
+        list-style: none;
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap; /* Para responsive */
+      }
+      .category-nav ul li a {
+        display: block;
+        padding: 15px 20px;
+        color: var(--color-texto-gris);
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+      }
+      .category-nav ul li a:hover,
+      .category-nav ul li a.active {
+        color: var(--color-primario);
+        box-shadow: inset 0 -3px 0 var(--color-primario);
+      }
+
+      /* ======== 4. SECCIÓN HERO (OFERTAS PRINCIPALES) ======== */
+      .hero {
+        height: 60vh; /* 60% de la altura de la pantalla */
+        background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
+          url("https://placehold.co/1920x700/007BFF/FFFFFF?text=Frutas+y+Verduras+Frescas")
+            no-repeat center center/cover;
+        /* IMPORTANTE: Reemplaza la URL de arriba por una imagen de supermercado */
+
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        text-align: center;
+        color: var(--color-blanco);
+      }
+
+      .hero-content {
+        max-width: 600px;
+      }
+      .hero h1 {
+        font-size: 3.5rem;
+        margin-bottom: 20px;
+        font-weight: 800;
+        text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+      }
+      .hero p {
+        font-size: 1.2rem;
+        margin-bottom: 30px;
+      }
+
+      /* ======== 5. SECCIÓN DEPARTAMENTOS (Categorías) ======== */
+      .departments {
+        padding: 60px 0;
+      }
+      .departments h2 {
+        margin-bottom: 40px;
+      }
+
+      .department-grid {
+        display: grid;
+        /* Rejilla flexible que se adapta */
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+        gap: 20px;
+      }
+
+      .department-card {
+        background-color: var(--color-blanco);
+        border-radius: 10px;
+        padding: 20px;
+        text-align: center;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        transition: all 0.3s ease;
+      }
+      .department-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+      .department-card .icon-container {
+        width: 80px;
+        height: 80px;
+        margin: 0 auto 15px auto;
+        border-radius: 50%; /* Círculo */
+        background-color: #e6f2ff; /* Azul claro */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        /* Emoji como placeholder. Usar SVG en producción */
+        font-size: 2.5rem;
+      }
+      /* Colores específicos para cada ícono */
+      .department-card.frutas .icon-container {
+        background-color: #e6ffed;
+        color: #00b33c;
+      } /* Verde */
+      .department-card.carnes .icon-container {
+        background-color: #ffe6e6;
+        color: #d90000;
+      } /* Rojo */
+      .department-card.lacteos .icon-container {
+        background-color: #e6f7ff;
+        color: #00aeff;
+      } /* Celeste */
+      .department-card.limpieza .icon-container {
+        background-color: #fff0e6;
+        color: #ff6a00;
+      } /* Naranja */
+
+      .department-card h3 {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-texto);
+        margin: 0;
+      }
+
+      /* ======== 6. SECCIÓN PRODUCTOS EN OFERTA ======== */
+      .featured-products {
+        padding: 60px 0;
+        background-color: var(--color-blanco);
+      }
+      .featured-products h2 {
+        margin-bottom: 40px;
+      }
+
+      .product-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 25px;
+      }
+
+      .product-card {
+        background-color: var(--color-blanco);
+        border: 1px solid #eee;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        transition: box-shadow 0.3s ease;
+      }
+      .product-card:hover {
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .product-card .product-image {
+        height: 220px;
+        /* Usamos 'contain' para que el producto se vea completo */
+        background: url("https://placehold.co/300x300/F8F9FA/333333?text=Producto")
+          no-repeat center center/contain;
+        position: relative;
+      }
+      .product-card .offer-tag {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background-color: var(--color-acento);
+        color: var(--color-texto);
+        font-size: 0.8rem;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 20px;
+      }
+
+      .product-info {
+        padding: 20px;
+      }
+      .product-category {
+        font-size: 0.8rem;
+        color: var(--color-texto-gris);
+        font-weight: 600;
+        margin-bottom: 5px;
+      }
+      .product-name {
+        font-size: 1rem;
+        font-weight: 700;
+        color: var(--color-texto);
+        margin-bottom: 10px;
+        /* Limitar a 2 líneas */
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+      .product-price {
+        margin-bottom: 15px;
+      }
+      .product-price .current-price {
+        font-size: 1.5rem;
+        font-weight: 800;
+        color: var(--color-primario);
+        margin-right: 8px;
+      }
+      .product-price .old-price {
+        font-size: 1rem;
+        color: var(--color-texto-gris);
+        text-decoration: line-through;
+      }
+
+      .add-to-cart-btn {
+        display: block;
+        width: 100%;
+        background-color: var(--color-primario);
+        color: var(--color-blanco);
+        padding: 12px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 700;
+        font-size: 0.9rem;
+        text-transform: uppercase;
+        text-align: center;
+        cursor: pointer;
+      }
+      .add-to-cart-btn:hover {
+        background-color: var(--color-secundario);
+      }
+
+      /* ======== 7. PIE DE PÁGINA ======== */
+      footer {
+        background-color: #2c3e50;
+        color: var(--color-blanco);
+        padding: 60px 0 20px 0;
+        margin-top: 40px;
+      }
+      .footer-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+        gap: 30px;
+        margin-bottom: 40px;
+      }
+      .footer-widget h5 {
+        font-size: 1.1rem;
+        font-weight: 700;
+        margin-bottom: 20px;
+      }
+      .footer-widget p {
+        font-size: 0.9rem;
+        color: #bdc3c7;
+        line-height: 1.7;
+      }
+      .footer-widget ul {
+        list-style: none;
+      }
+      .footer-widget ul li {
+        margin-bottom: 10px;
+      }
+      .footer-widget ul li a {
+        color: #bdc3c7;
+        font-size: 0.9rem;
+      }
+      .footer-widget ul li a:hover {
+        color: var(--color-blanco);
+        padding-left: 5px;
+      }
+      .footer-bottom {
+        border-top: 1px solid #4a6a8a;
+        padding-top: 20px;
+        text-align: center;
+        font-size: 0.8rem;
+        color: #bdc3c7;
+      }
+
+      /* ======== 8. RESPONSIVE (Móviles) ======== */
+      @media (max-width: 992px) {
+        .search-bar {
+          margin: 0 15px;
+        }
+        /* Ocultar texto de acciones de usuario en tablets */
+        .user-actions a span {
+          display: none;
+        }
+        .user-actions .icon {
+          margin-right: 0;
+        }
+        .category-nav ul {
+          justify-content: flex-start;
+          overflow-x: auto; /* Permite scroll horizontal */
+          white-space: nowrap;
+          -ms-overflow-style: none; /* IE y Edge */
+          scrollbar-width: none; /* Firefox */
+        }
+        .category-nav ul::-webkit-scrollbar {
+          display: none; /* Chrome, Safari, Opera */
+        }
+      }
+
+      @media (max-width: 768px) {
+        .header-main {
+          flex-direction: column;
+          gap: 15px;
+        }
+        .search-bar {
+          width: 100%;
+          margin: 0;
+          max-width: 100%;
+        }
+        .user-actions {
+          /* Mover a la barra superior en móvil */
+          display: none;
+        }
+        .top-bar .container {
+          justify-content: center;
+          text-align: center;
+        }
+        /* Mover acciones de usuario a la barra superior */
+        .top-bar .user-actions-mobile {
+          display: block;
+        }
+
+        .hero h1 {
+          font-size: 2.5rem;
+        }
+      }
+      @media (max-width: 576px) {
+        .department-grid {
+          grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+        }
+        .department-card .icon-container {
+          width: 60px;
+          height: 60px;
+          font-size: 2rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div class="top-bar">
+        <div class="container">
+          <span>Horario: Lun-Sáb 8:00am - 9:00pm</span>
+          <div>
+            <a href="#">Ayuda</a>
+            <a href="#">Contacto</a>
+            <span class="user-actions-mobile" style="display: none">
+              <a href="#">👤 Cuenta</a>
+              <a href="#">🛒 Carrito</a>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="header-main container">
+        <a href="#" class="logo">MercadoFácil</a>
+
+        <form class="search-bar">
+          <input
+            type="search"
+            placeholder="Buscar productos, marcas y más..."
+          />
+          <button type="submit">Buscar</button>
+        </form>
+
+        <div class="user-actions">
+          <a href="#">
+            <span class="icon">👤</span>
+            <span>Mi Cuenta</span>
+          </a>
+          <a href="#">
+            <span class="icon">🛒</span>
+            <span>Carrito (0)</span>
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <nav class="category-nav">
+      <ul>
+        <li><a href="#" class="active">Ofertas</a></li>
+        <li><a href="#">Frutas y Verduras</a></li>
+        <li><a href="#">Carnes y Pollo</a></li>
+        <li><a href="#">Lácteos y Huevos</a></li>
+        <li><a href="#">Abarrotes</a></li>
+        <li><a href="#">Panadería</a></li>
+        <li><a href="#">Limpieza</a></li>
+        <li><a href="#">Bebidas</a></li>
+      </ul>
+    </nav>
+
+    <section class="hero">
+      <div class="hero-content">
+        <h1>¡Ofertas de la Semana!</h1>
+        <p>
+          Productos frescos con hasta 30% de descuento. ¡Solo por tiempo
+          limitado!
+        </p>
+        <a href="#" class="cta-button">Ver Todas las Ofertas</a>
+      </div>
+    </section>
+
+    <section class="departments container">
+      <h2>Nuestros Departamentos</h2>
+      <div class="department-grid">
+        <a href="#" class="department-card frutas">
+          <div class="icon-container">🍎</div>
+          <h3>Frutas y Verduras</h3>
+        </a>
+        <a href="#" class="department-card carnes">
+          <div class="icon-container">🥩</div>
+          <h3>Carnes y Pollo</h3>
+        </a>
+        <a href="#" class="department-card lacteos">
+          <div class="icon-container">🥛</div>
+          <h3>Lácteos y Huevos</h3>
+        </a>
+        <a href="#" class="department-card">
+          <div class="icon-container">🍞</div>
+          <h3>Panadería</h3>
+        </a>
+        <a href="#" class="department-card">
+          <div class="icon-container">🥫</div>
+          <h3>Abarrotes</h3>
+        </a>
+        <a href="#" class="department-card limpieza">
+          <div class="icon-container">🧼</div>
+          <h3>Limpieza</h3>
+        </a>
+      </div>
+    </section>
+
+    <section class="featured-products">
+      <div class="container">
+        <h2>Productos en Oferta</h2>
+        <div class="product-grid">
+          <div class="product-card">
+            <div
+              class="product-image"
+              style="
+                background-image: url('https://placehold.co/300x300/e6ffed/333333?text=Lechuga');
+              "
+            >
+              <span class="offer-tag">-20%</span>
+            </div>
+            <div class="product-info">
+              <div class="product-category">Frutas y Verduras</div>
+              <h3 class="product-name">Lechuga Crespa Fresca (Unidad)</h3>
+              <div class="product-price">
+                <span class="current-price">Bs. 3.20</span>
+                <span class="old-price">Bs. 4.00</span>
+              </div>
+              <a href="#" class="add-to-cart-btn">Añadir al Carrito</a>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div
+              class="product-image"
+              style="
+                background-image: url('https://placehold.co/300x300/ffe6e6/333333?text=Pollo');
+              "
+            ></div>
+            <div class="product-info">
+              <div class="product-category">Carnes y Pollo</div>
+              <h3 class="product-name">Pechuga de Pollo (Kg)</h3>
+              <div class="product-price">
+                <span class="current-price">Bs. 28.50</span>
+              </div>
+              <a href="#" class="add-to-cart-btn">Añadir al Carrito</a>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div
+              class="product-image"
+              style="
+                background-image: url('https://placehold.co/300x300/e6f7ff/333333?text=Leche');
+              "
+            >
+              <span class="offer-tag">3x2</span>
+            </div>
+            <div class="product-info">
+              <div class="product-category">Lácteos</div>
+              <h3 class="product-name">Leche UHT PIL (1 Litro)</h3>
+              <div class="product-price">
+                <span class="current-price">Bs. 5.80</span>
+              </div>
+              <a href="#" class="add-to-cart-btn">Añadir al Carrito</a>
+            </div>
+          </div>
+
+          <div class="product-card">
+            <div
+              class="product-image"
+              style="
+                background-image: url('https://placehold.co/300x300/fff0e6/333333?text=Detergente');
+              "
+            ></div>
+            <div class="product-info">
+              <div class="product-category">Limpieza</div>
+              <h3 class="product-name">Detergente OMO Multiacción (1 Kg)</h3>
+              <div class="product-price">
+                <span class="current-price">Bs. 18.00</span>
+              </div>
+              <a href="#" class="add-to-cart-btn">Añadir al Carrito</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer>
+      <div class="container">
+        <div class="footer-grid">
+          <div class="footer-widget">
+            <h5 style="font-size: 1.5rem; color: var(--color-blanco)">
+              MercadoFácil
+            </h5>
+            <p>
+              Tu supermercado online de confianza. Productos frescos entregados
+              en la puerta de tu casa.
+            </p>
+            <p>Síguenos: <b>FB</b> | <b>IG</b> | <b>TW</b></p>
+          </div>
+
+          <div class="footer-widget">
+            <h5>Departamentos</h5>
+            <ul>
+              <li><a href="#">Frutas y Verduras</a></li>
+              <li><a href="#">Carnes y Pollo</a></li>
+              <li><a href="#">Lácteos y Huevos</a></li>
+              <li><a href="#">Abarrotes</a></li>
+              <li><a href="#">Limpieza</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-widget">
+            <h5>Ayuda</h5>
+            <ul>
+              <li><a href="#">Preguntas Frecuentes</a></li>
+              <li><a href="#">Cómo Comprar</a></li>
+              <li><a href="#">Medios de Pago</a></li>
+              <li><a href="#">Términos y Condiciones</a></li>
+            </ul>
+          </div>
+
+          <div class="footer-widget">
+            <h5>Contacto</h5>
+            <p>Av. Siempre Viva 742</p>
+            <p>Tel: +591 2 2123456</p>
+            <p>Email: soporte@mercadofacil.bo</p>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          &copy; 2025 MercadoFácil S.R.L. Todos los derechos reservados.
+        </div>
+      </div>
+    </footer>
+  </body>
+</html>
