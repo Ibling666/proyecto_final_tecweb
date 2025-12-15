@@ -91,6 +91,7 @@
 
 <script>
 import TimeInfo from './TimeInfo.vue';
+import { supabase } from '../../supabase/client.js'
 
 export default {
   name: 'ContactForm',
@@ -127,29 +128,38 @@ export default {
     this.loadContactCount();
   },
   methods: {
-    handleSubmit() {
-      if (this.validateForm()) {
-        const savedContact = this.saveContact();
+  async handleSubmit() {
+    if (this.validateForm()) {
+      try {
+        await this.saveContact();
+
         this.message =
           '¡Gracias por contactarnos! Hemos recibido tu mensaje y nos pondremos en contacto contigo pronto.';
         this.messageClass = 'mensaje-exito';
+
         this.resetForm();
         this.contactCount++;
         this.saveContactCount();
-        this.$emit('submitted', savedContact);
+
+        this.$emit('submitted');
 
         setTimeout(() => {
           this.message = '';
         }, 5000);
-      } else {
-        this.message = 'Por favor, completa todos los campos obligatorios correctamente.';
+      } catch (error) {
+        this.message = '❌ Error al enviar el mensaje. Intenta nuevamente.';
         this.messageClass = 'mensaje-error';
-
-        setTimeout(() => {
-          this.message = '';
-        }, 5000);
       }
-    },
+    } else {
+      this.message = 'Por favor, completa todos los campos obligatorios correctamente.';
+      this.messageClass = 'mensaje-error';
+
+      setTimeout(() => {
+        this.message = '';
+      }, 5000);
+    }
+  },
+
     validateForm() {
       const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
       return (
@@ -160,17 +170,27 @@ export default {
         this.formData.mensaje
       );
     },
-    saveContact() {
-      const contact = {
-        ...this.formData,
-        fecha: new Date().toISOString(),
-        id: Date.now()
-      };
-      const contacts = JSON.parse(localStorage.getItem('contacts') || '[]');
-      contacts.push(contact);
-      localStorage.setItem('contacts', JSON.stringify(contacts));
-      return contact;
+    async saveContact() {
+      const { data, error } = await supabase
+        .from('contactos')
+        .insert([
+          {
+            nombre: this.formData.nombre,
+            email: this.formData.email,
+            telefono: this.formData.telefono,
+            tipo_proyecto: this.formData.tipoProyecto,
+            mensaje: this.formData.mensaje
+          }
+        ]);
+
+      if (error) {
+        console.error('Error Supabase:', error);
+        throw error;
+      }
+
+      return data;
     },
+
     resetForm() {
       this.formData = {
         nombre: '',

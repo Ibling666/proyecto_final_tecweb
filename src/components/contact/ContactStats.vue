@@ -49,15 +49,14 @@
       <button @click="recargarDatos" class="btn-recargar-stats">
          Actualizar
       </button>
-      <button @click="limpiarEstadisticas" class="btn-limpiar" v-if="contactos.length > 0">
-         Limpiar Todo
-      </button>
+     
     </div>
   </div>
 </template>
 
 <script setup>
 import { ref, reactive, computed, onMounted, onUnmounted, watch } from 'vue';
+import { supabase } from '@/supabase/client.js'
 
 // ===== REF - Valores primitivos reactivos =====
 const contactos = ref([]);
@@ -98,26 +97,17 @@ const ultimoContacto = computed(() => {
 });
 
 // ===== DEFINEEMITS - Comunicación con padre =====
-const emit = defineEmits(['estadisticasActualizadas', 'estadisticasLimpiadas']);
+const emit = defineEmits(['estadisticasActualizadas'])
 
 // ===== LIFECYCLE HOOKS =====
 let storageListener = null;
 
 onMounted(() => {
-  console.log(' Componente de estadísticas montado');
-  cargarContactos();
-  
-  // Escuchar cambios en localStorage desde otros componentes
-  storageListener = () => {
-    console.log('Detectado cambio en localStorage');
-    cargarContactos();
-  };
-  
-  window.addEventListener('storage', storageListener);
-  
-  // También escuchar eventos personalizados dentro de la misma pestaña
-  window.addEventListener('contactosActualizados', storageListener);
+  console.log('📊 Estadísticas conectadas a Supabase')
+  cargarContactos()
 });
+
+
 
 onUnmounted(() => {
   if (storageListener) {
@@ -140,20 +130,19 @@ watch(contactos, (nuevosContactos) => {
 }, { deep: true });
 
 // ===== MÉTODOS =====
-const cargarContactos = () => {
+const cargarContactos = async () => {
   try {
-    const guardados = localStorage.getItem('contacts');
-    if (guardados) {
-      contactos.value = JSON.parse(guardados);
-      console.log(` Cargados ${contactos.value.length} contactos`);
-    } else {
-      contactos.value = [];
-      console.log(' No hay contactos guardados');
-    }
-    actualizarEstadisticas(contactos.value);
+    const { data, error } = await supabase
+      .from('contactos')
+      .select('*')
+      .order('fecha', { ascending: true })
+
+    if (error) throw error
+
+    contactos.value = data || []
   } catch (error) {
-    console.error(' Error al cargar contactos:', error);
-    contactos.value = [];
+    console.error('Error al cargar contactos desde Supabase:', error)
+    contactos.value = []
   }
 };
 
@@ -177,23 +166,6 @@ const actualizarEstadisticas = (listaContactos) => {
 const recargarDatos = () => {
   console.log(' Recargando datos...');
   cargarContactos();
-};
-
-const limpiarEstadisticas = () => {
-  if (confirm(' ¿Estás seguro de eliminar TODOS los contactos? Esta acción no se puede deshacer.')) {
-    localStorage.removeItem('contacts');
-    localStorage.removeItem('contadorContactos');
-    contactos.value = [];
-    estadisticas.proyectosPorTipo = {};
-    estadisticas.totalContactos = 0;
-    
-    // Disparar evento para que otros componentes se actualicen
-    window.dispatchEvent(new Event('contactosActualizados'));
-    
-    emit('estadisticasLimpiadas');
-    
-    alert(' Todos los contactos han sido eliminados');
-  }
 };
 
 const formatearTipo = (tipo) => {

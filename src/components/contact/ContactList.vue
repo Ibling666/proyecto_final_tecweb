@@ -1,15 +1,13 @@
 <template>
   <div class="lista-contactos-guardados">
-    <h3>Contactos guardados (localStorage)</h3>
+    <h3>Contactos guardados (Supabase)</h3>
 
     <div class="acciones-lista">
       <button class="btn-recargar" @click="loadContacts">Recargar</button>
       <button class="btn-exportar" @click="exportContacts" :disabled="contacts.length === 0">
         Exportar contactos
       </button>
-      <button class="btn-vaciar" @click="clearContacts" :disabled="contacts.length === 0">
-        Vaciar lista
-      </button>
+     
     </div>
 
     <p v-if="contacts.length === 0" class="vacio">No hay contactos todavía.</p>
@@ -26,30 +24,39 @@
   </div>
 </template>
 
+
 <script setup>
-import { onMounted, ref } from 'vue';
+import { supabase } from '@/supabase/client.js'
+import { onMounted, onUnmounted, ref } from 'vue'
+
+let channel = null
 
 const contacts = ref([]);
 const showMessage = ref('');
 
-const loadContacts = () => {
-  const saved = JSON.parse(localStorage.getItem('contacts') || '[]');
-  contacts.value = saved.reverse();
-  showMessage.value = `Se cargaron ${contacts.value.length} contactos.`;
-  setTimeout(() => (showMessage.value = ''), 3000);
-};
+const loadContacts = async () => {
+  showMessage.value = ''
+  try {
+    const { data, error } = await supabase
+      .from('contactos')
+      .select('*')
+      .order('fecha', { ascending: false })
 
-const clearContacts = () => {
-  localStorage.removeItem('contacts');
-  localStorage.removeItem('contadorContactos');
-  contacts.value = [];
-  showMessage.value = 'Lista vaciada correctamente.';
-  
-  // Disparar evento para que otros componentes se actualicen
-  window.dispatchEvent(new Event('contactosActualizados'));
-  
-  setTimeout(() => (showMessage.value = ''), 3000);
-};
+    if (error) throw error
+
+    contacts.value = data
+    showMessage.value = `Se cargaron ${contacts.value.length} contactos desde Supabase.`
+  } catch (err) {
+    console.error(err)
+    showMessage.value = '❌ Error al cargar contactos desde Supabase.'
+  } finally {
+    setTimeout(() => (showMessage.value = ''), 3000)
+  }
+}
+
+
+
+
 
 const formatDate = (dateStr) => {
   const d = new Date(dateStr);
@@ -89,7 +96,27 @@ const downloadFile = (content, fileName, type) => {
   URL.revokeObjectURL(url);
 };
 
-onMounted(() => {
-  loadContacts();
-});
+onMounted(async () => {
+  await loadContacts()
+
+  channel = supabase
+    .channel('contactos-realtime')
+    .on(
+      'postgres_changes',
+      { event: 'INSERT', schema: 'public', table: 'contactos' },
+      (payload) => {
+        console.log('📡 Nuevo contacto recibido:', payload.new)
+        contacts.value.unshift(payload.new)
+      }
+    )
+    .subscribe()
+})
+;
+onUnmounted(() => {
+  if (channel) {
+    supabase.removeChannel(channel)
+  }
+})
+
+
 </script>
