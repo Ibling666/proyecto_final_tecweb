@@ -6,13 +6,15 @@
         <p>Más de 150 marcas han crecido con TINW</p>
       </div>
 
-      <!-- Loading -->
+      <!-- LOADING -->
       <p v-if="loading" class="loading">Cargando testimonios...</p>
 
-      <!-- Error -->
-      <p v-if="error" class="error">{{ error }}</p>
+      <!-- ERROR -->
+      <p v-if="error" class="error">
+        {{ error }}
+      </p>
 
-      <!-- Carrusel -->
+      <!-- CARRUSEL -->
       <div
         v-if="!loading && testimonials.length"
         class="testimonios-carousel-container"
@@ -38,7 +40,7 @@
           </div>
         </div>
 
-        <!-- Indicadores -->
+        <!-- INDICADORES -->
         <div class="carousel-indicators">
           <span
             v-for="(_, index) in totalSlides"
@@ -73,7 +75,21 @@ const cardsPerView = ref(3);
 let autoSlideInterval = null;
 
 /* =========================
-   API (RÚBRICA CLAVE)
+   MENSAJES ALEATORIOS
+========================= */
+const messages = [
+  "Excelente servicio, muy profesionales.",
+  "Superaron nuestras expectativas.",
+  "Atención rápida y resultados increíbles.",
+  "Totalmente recomendados, gran equipo.",
+  "Calidad, compromiso y confianza.",
+];
+
+const randomMessage = () =>
+  messages[Math.floor(Math.random() * messages.length)];
+
+/* =========================
+   API EXTERNA (RÚBRICA CLAVE)
 ========================= */
 const fetchTestimonials = async () => {
   try {
@@ -85,12 +101,12 @@ const fetchTestimonials = async () => {
 
     const data = await response.json();
 
-    // Adaptamos la API a testimonios
+    // Adaptación de API a testimonios
     testimonials.value = data.map((user) => ({
       id: user.id,
       name: user.name,
       company: user.company.name,
-      message: "Excelente servicio, muy profesionales y confiables.",
+      message: randomMessage(),
       image: `https://i.pravatar.cc/150?img=${user.id}`,
     }));
 
@@ -174,7 +190,7 @@ const resetAutoSlide = () => {
 ========================= */
 onMounted(() => {
   updateCardsPerView();
-  fetchTestimonials(); // 👈 AQUÍ SE CONSUME EL API
+  fetchTestimonials(); // 👈 consumo real del API
   startAutoSlide();
   window.addEventListener("resize", updateCardsPerView);
 });
