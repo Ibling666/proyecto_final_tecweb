@@ -19,6 +19,8 @@ Este proyecto corresponde a la migración del sitio web TINW a una arquitectura 
 * **Vue Router**
 * **LocalStorage (persistencia de datos)**
 * **FontAwesome**
+* Vercel (Deploy)
+* Supabase (PostgreSQL + Realtime)
 * **CSS**
 * **JavaScript ES Modules**
 
@@ -41,6 +43,13 @@ npm -v
 Instalar dependencias del proyecto:
 
 npm install
+npm install @supabase/supabase-js
+
+
+Configurar variables de entorno (.env):
+VITE_SUPABASE_URL=https://tlpbctbzgviksbcvukqs.supabase.co
+VITE_SUPABASE_ANON_KEY=sb_publishable_GVddvZJ0d_dR4a0tg5NYMQ_XfPBvqmK
+
 
 
 Iniciar el servidor de desarrollo:
@@ -53,6 +62,17 @@ http://localhost:5173/
 
 Compilar para producción:
 npm run build
+
+## Despliegue en Vercel
+
+El proyecto se despliega como SPA en Vercel
+
+Se utiliza vercel.json para el manejo de rutas
+
+Las variables de entorno se configuran desde el panel de Vercel
+
+El proyecto estará disponible en:
+https://proyecto-final-tecweb.vercel.app/
 
 
 ## Estructura del Proyecto
