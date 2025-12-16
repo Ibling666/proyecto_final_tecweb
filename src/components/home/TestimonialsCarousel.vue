@@ -3,9 +3,22 @@
     <div class="container">
       <div class="section-title">
         <h2>Lo que dicen nuestros clientes</h2>
-        <p>Más de 150 marcas han crecido con nuestra empresa TINW</p>
+        <p>Más de 150 marcas han crecido con TINW</p>
       </div>
-      <div class="testimonios-carousel-container">
+
+      <!-- LOADING -->
+      <p v-if="loading" class="loading">Cargando testimonios...</p>
+
+      <!-- ERROR -->
+      <p v-if="error" class="error">
+        {{ error }}
+      </p>
+
+      <!-- CARRUSEL -->
+      <div
+        v-if="!loading && testimonials.length"
+        class="testimonios-carousel-container"
+      >
         <div class="testimonios-inner" :style="carouselStyle">
           <div
             v-for="testimonial in testimonials"
@@ -14,8 +27,9 @@
             @click="handleTestimonialClick(testimonial)"
           >
             <div class="testimonio-text">
-              <p>{{ testimonial.message }}</p>
+              <p>"{{ testimonial.message }}"</p>
             </div>
+
             <div class="testimonio-autor">
               <img :src="testimonial.image" :alt="testimonial.name" />
               <div>
@@ -25,14 +39,16 @@
             </div>
           </div>
         </div>
+
+        <!-- INDICADORES -->
         <div class="carousel-indicators">
-          <div
-            v-for="(indicator, index) in totalSlides"
+          <span
+            v-for="(_, index) in totalSlides"
             :key="index"
             class="indicator"
             :class="{ active: index === activeIndicatorIndex }"
             @click="goToSlide(index)"
-          ></div>
+          ></span>
         </div>
       </div>
     </div>
@@ -40,101 +56,128 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted, onUnmounted, defineEmits } from 'vue';
-import { testimonials } from '@/data/testimonials';
+import { ref, computed, onMounted, onUnmounted, defineEmits } from "vue";
 
-// Emits
-const emit = defineEmits(['testimonial-changed']);
+/* =========================
+   EVENTOS (RÚBRICA)
+========================= */
+const emit = defineEmits(["testimonial-changed"]);
 
-// Data
+/* =========================
+   ESTADO
+========================= */
+const testimonials = ref([]);
+const loading = ref(true);
+const error = ref(null);
+
 const currentIndex = ref(0);
 const cardsPerView = ref(3);
 let autoSlideInterval = null;
 
-// Computed
-const carouselStyle = computed(() => {
-  const cardWidth = 100 / cardsPerView.value;
-  const translateX = -currentIndex.value * cardWidth;
-  return {
-    transform: `translateX(${translateX}%)`
-  };
-});
+/* =========================
+   MENSAJES ALEATORIOS
+========================= */
+const messages = [
+  "Excelente servicio, muy profesionales.",
+  "Superaron nuestras expectativas.",
+  "Atención rápida y resultados increíbles.",
+  "Totalmente recomendados, gran equipo.",
+  "Calidad, compromiso y confianza.",
+];
 
-const totalSlides = computed(() => {
-  return Math.ceil(testimonials.length / cardsPerView.value);
-});
+const randomMessage = () =>
+  messages[Math.floor(Math.random() * messages.length)];
 
-const activeIndicatorIndex = computed(() => {
-  return Math.floor(currentIndex.value / cardsPerView.value);
-});
+/* =========================
+   API EXTERNA (RÚBRICA CLAVE)
+========================= */
+const fetchTestimonials = async () => {
+  try {
+    const response = await fetch("https://jsonplaceholder.typicode.com/users");
 
-// Methods
-const updateCardsPerView = () => {
-  if (window.innerWidth <= 768) {
-    cardsPerView.value = 1;
-  } else if (window.innerWidth <= 992) {
-    cardsPerView.value = 2;
-  } else {
-    cardsPerView.value = 3;
+    if (!response.ok) {
+      throw new Error("Error al obtener testimonios");
+    }
+
+    const data = await response.json();
+
+    // Adaptación de API a testimonios
+    testimonials.value = data.map((user) => ({
+      id: user.id,
+      name: user.name,
+      company: user.company.name,
+      message: randomMessage(),
+      image: `https://i.pravatar.cc/150?img=${user.id}`,
+    }));
+
+    console.log("Testimonios cargados desde API:", testimonials.value);
+  } catch (err) {
+    error.value = err.message;
+  } finally {
+    loading.value = false;
   }
 };
 
+/* =========================
+   COMPUTED
+========================= */
+const carouselStyle = computed(() => {
+  const width = 100 / cardsPerView.value;
+  return {
+    transform: `translateX(-${currentIndex.value * width}%)`,
+  };
+});
+
+const totalSlides = computed(() =>
+  Math.ceil(testimonials.value.length / cardsPerView.value)
+);
+
+const activeIndicatorIndex = computed(() =>
+  Math.floor(currentIndex.value / cardsPerView.value)
+);
+
+/* =========================
+   MÉTODOS
+========================= */
+const updateCardsPerView = () => {
+  if (window.innerWidth <= 768) cardsPerView.value = 1;
+  else if (window.innerWidth <= 992) cardsPerView.value = 2;
+  else cardsPerView.value = 3;
+};
+
 const nextSlide = () => {
-  const maxIndex = testimonials.length - cardsPerView.value;
+  const maxIndex = testimonials.value.length - cardsPerView.value;
   const previousIndex = currentIndex.value;
-  currentIndex.value = currentIndex.value >= maxIndex ? 0 : currentIndex.value + 1;
-  
-  // Emitir evento con el testimonio visible
-  const visibleTestimonial = testimonials[currentIndex.value];
-  emit('testimonial-changed', {
-    id: visibleTestimonial.id,
-    name: visibleTestimonial.name,
-    company: visibleTestimonial.company,
+
+  currentIndex.value =
+    currentIndex.value >= maxIndex ? 0 : currentIndex.value + 1;
+
+  emit("testimonial-changed", {
     currentIndex: currentIndex.value,
-    previousIndex
+    previousIndex,
   });
 };
 
 const goToSlide = (index) => {
-  const maxIndex = testimonials.length - cardsPerView.value;
-  const previousIndex = currentIndex.value;
-  currentIndex.value = Math.min(Math.max(index * cardsPerView.value, 0), maxIndex);
+  currentIndex.value = index * cardsPerView.value;
   resetAutoSlide();
-  
-  // Emitir evento
-  const visibleTestimonial = testimonials[currentIndex.value];
-  emit('testimonial-changed', {
-    id: visibleTestimonial.id,
-    name: visibleTestimonial.name,
-    company: visibleTestimonial.company,
-    currentIndex: currentIndex.value,
-    previousIndex
-  });
 };
 
 const handleTestimonialClick = (testimonial) => {
-  console.log(' Testimonio clickeado:', testimonial.name);
-  
-  // Emitir evento específico del testimonio clickeado
-  emit('testimonial-changed', {
-    id: testimonial.id,
-    name: testimonial.name,
-    company: testimonial.company,
-    message: testimonial.message,
-    clicked: true
+  console.log("Testimonio clickeado:", testimonial);
+
+  emit("testimonial-changed", {
+    ...testimonial,
+    clicked: true,
   });
 };
 
 const startAutoSlide = () => {
-  autoSlideInterval = setInterval(() => {
-    nextSlide();
-  }, 3000);
+  autoSlideInterval = setInterval(nextSlide, 3000);
 };
 
 const stopAutoSlide = () => {
-  if (autoSlideInterval) {
-    clearInterval(autoSlideInterval);
-  }
+  if (autoSlideInterval) clearInterval(autoSlideInterval);
 };
 
 const resetAutoSlide = () => {
@@ -142,16 +185,19 @@ const resetAutoSlide = () => {
   startAutoSlide();
 };
 
-// Lifecycle
+/* =========================
+   CICLO DE VIDA
+========================= */
 onMounted(() => {
   updateCardsPerView();
+  fetchTestimonials(); // 👈 consumo real del API
   startAutoSlide();
-  window.addEventListener('resize', updateCardsPerView);
+  window.addEventListener("resize", updateCardsPerView);
 });
 
 onUnmounted(() => {
   stopAutoSlide();
-  window.removeEventListener('resize', updateCardsPerView);
+  window.removeEventListener("resize", updateCardsPerView);
 });
 </script>
 
@@ -164,5 +210,15 @@ onUnmounted(() => {
 .testimonio-card:hover {
   transform: scale(1.05);
   box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+}
+
+.loading {
+  text-align: center;
+  color: #555;
+}
+
+.error {
+  color: red;
+  text-align: center;
 }
 </style>
